@@ -7,6 +7,13 @@ gcloud pubsub topics list
 gcloud pubsub topics create sentiment-topic
 gcloud pubsub subscriptions create tmp --topic projects/sentiment-302320/topics/sentiment-topic
 gcloud pubsub subscriptions pull tmp
+
+
+// function logs
+gcloud functions logs read thumb-firebase --limit 50
+
+
+gsutil ls gs://sentiment-302320.appspot.com
 ```
 
 ## Reading 

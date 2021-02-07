@@ -1,31 +1,37 @@
 # Overview
+Firebase web app with several cloud functions running on GCP
 
-## Functions
-User uploads a photo of their face to cloud storage at gs://bucket/userID/photo.png, storage event triggers functions to generate thumbnail and determine image sentiment.
+* GitHub: https://github.com/stehrn/sentiment
+* Firebase app: https://console.firebase.google.com/project/sentiment-302320/
+* stackblitz: https://stackblitz.com/edit/sentiments
 
-### Thumbnail
-* Thumbnail function generates thumbnail and stores in cloud storage (gs://bucket/userID/thumb_photo.png)
-* Storage event from thumbnail triggers function to update firebase user/photo document with location of thumbnail 
+# Functions
+User uploads a photo of their face to cloud storage at gs://bucket/userID/photoID.png, storage event triggers functions to generate thumbnail and determine image sentiment.
 
-### Sentiment
+## Thumbnail
+* Thumbnail function generates thumbnail and stores in cloud storage (gs://bucket/userID/thumb_photoID.png)
+* Storage event from thumbnail triggers function to update firebase photo document at /users/userID/photos/photoID with location of thumbnail 
+
+## Sentiment
 * Sentiment function uses Cloud Vision API to determine sentiment, publishing result to pubsub topic
-* Function subscribed to topic updates firebase user/photo document with image sentiment
+* Function subscribed to topic updates firebase photo document at /users/userID/photos/photoID with image sentiment
 
+# Web App
+Web app developed using [stackblitz](https://stackblitz.com/edit/sentiments)
 
 # Deployment
 Swtich to correct project:
 ```
-export GCLOUD_PROJECT_ID=fir-web-codelab-a86f0
-sentiment-302320
+export GCLOUD_PROJECT_ID=sentiment-302320
 gcloud config set project $GCLOUD_PROJECT_ID
 ```
 
-## Thumbnail 
+## Thumbnail Functions
 ```
-export IMAGE_BUCKET_NAME=stehrntmp2
+export IMAGE_BUCKET_NAME=sentiment-302320.appspot.com
 export REGION=europe-west2
 
-gcloud functions deploy thumb \
+gcloud functions deploy thumb-image \
 --runtime go113 \
 --region ${REGION} \
 --trigger-bucket ${IMAGE_BUCKET_NAME} \
@@ -39,13 +45,12 @@ gcloud functions deploy thumb-firebase \
 --set-env-vars "GCLOUD_PROJECT_ID=${GCLOUD_PROJECT_ID}"
 ```
 
-## Sentiment Analysis
-
+## Sentiment Analysis Functions
 ```
 export RESULT_TOPIC=sentiment-topic
 gcloud pubsub topics create ${RESULT_TOPIC}
 
-gcloud functions deploy sentiment \
+gcloud functions deploy sentiment-image \
 --runtime go113 \
 --region ${REGION} \
 --trigger-bucket ${IMAGE_BUCKET_NAME} \
@@ -58,12 +63,6 @@ gcloud functions deploy sentiment-firebase \
 --trigger-topic ${RESULT_TOPIC} \
 --entry-point UpdateFirebaseSentiment \
 --set-env-vars "GCLOUD_PROJECT_ID=${GCLOUD_PROJECT_ID}"
-```
-
-## Ad hoc commands
-```
-// read logs
-gcloud functions logs read thumb-firebase --limit 50
 ```
 
 # Integration tests

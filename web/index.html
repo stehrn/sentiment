@@ -1,0 +1,71 @@
+<head>
+    <meta charset="utf-8" />
+    <title>Firebase Meetup</title>
+    <link
+      type="text/css"
+      rel="stylesheet"
+      href="https://cdn.firebase.com/libs/firebaseui/4.0.0/firebaseui.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700|Roboto:300,400,700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+    <style>
+      #file-selector {
+        border: 3px dashed green;
+        width: 440px;
+        height: 150px;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div id="app">
+      <!-- <img src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/firestore.png?alt=media&token=56d039dc-4a6c-477b-a153-a4bb8234646f" /> -->
+      <!-- <img src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/hosting.png?alt=media&token=57c8adb6-08c4-43f7-9395-4c299896a36c" /> -->
+      <img
+        src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/codelab.png?alt=media&token=f45f808c-ce40-4b34-944c-8d8fac00e13d"
+      />
+  
+      <section id="event-details-container">
+        <h1>my-sentiment</h1>
+        <button id="login">Login</button>
+      </section>
+  
+      <hr />
+  
+      <section id="firebaseui-auth-container"></section>
+  
+      <section id="description-container">
+        <h2>Track your daily mood</h2>
+        <p>
+          Upload a photo of how you feel, have AI detect your mood, visualise how
+          your mood has changed over time
+        </p>
+      </section>
+  
+      <section id="photo-container">
+        <h2>Upload Photo</h2>
+        <div id="file-selector"></div>
+        <form id="upload-photo">
+          <input type="file" id="file" accept=".jpg, .jpeg, .png" multiple />
+          <br />Message: <input type="text" id="message" /> <br /><button
+            type="submit"
+            id="analyse"
+          >
+            <i class="material-icons">send</i>
+            <span>Analyse</span>
+          </button>
+        </form>
+  
+        <section id="photos"></section>
+      </section>
+    </div>
+  </body>
+  

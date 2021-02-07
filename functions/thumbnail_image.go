@@ -40,7 +40,7 @@ func GenerateThumbnailImage(ctx context.Context, event GCSEvent) error {
 	inputBlob := storageClient.Bucket(event.Bucket).Object(event.Name)
 	r, err := inputBlob.NewReader(ctx)
 	if err != nil {
-		return fmt.Errorf("inputBlob.NewReader: %v", event, err)
+		return fmt.Errorf("inputBlob.NewReader: %v", err)
 	}
 
 	outputName := storageImage.ToThumbNail()
