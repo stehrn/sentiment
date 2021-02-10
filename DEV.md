@@ -1,4 +1,13 @@
 
+
+## wIP
+https://css-tricks.com/examples/DragAndDropFileUploading/?submit-on-demand
+https://webdevtrick.com/infinite-image-cards-scrolling/
+https://webdevtrick.com/jquery-drag-and-drop-file-upload/
+https://webdevtrick.com/css-grid-image-gallery/
+https://www.flaticon.com/
+
+
 ## Ad-hoc commands 
 
 ```

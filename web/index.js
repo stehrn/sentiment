@@ -1,5 +1,6 @@
 // Import stylesheets
 import "./style.css";
+import "./circle/css/circle.css";
 // Firebase App (the core Firebase SDK) is always required and must be listed first
 import * as firebase from "firebase/app";
 
@@ -17,8 +18,6 @@ const photoContainer = document.getElementById("photo-container");
 const form = document.getElementById("upload-photo");
 const input = document.getElementById("message");
 const photos = document.getElementById("photos");
-
-const dropArea = document.getElementById("drop-area");
 
 var photoListener = null;
 
@@ -69,17 +68,18 @@ async function main() {
   firebase.auth().onAuthStateChanged(user => {
     if (user) {
       startLoginButton.textContent = "LOGOUT";
-      // Show guestbook to logged-in users
+      // Show photos to logged-in users
       photoContainer.style.display = "block";
 
-      // Subscribe to the guestbook collection
+      // Subscribe to the photos collection
+      // TODO
       subscribePhotos();
     } else {
       startLoginButton.textContent = "Log In";
-      // Hide guestbook for non-logged-in users
+      // Hide photos for non-logged-in users
       photoContainer.style.display = "none";
 
-      // Unsubscribe from the guestbook collection
+      // Unsubscribe from the photos collection
       unsubscribePhotos();
     }
   });
@@ -87,6 +87,7 @@ async function main() {
   // Listen to photo updates
   function subscribePhotos() {
     console.log("subscribing to photos");
+    const storageRef = firebase.storage().ref();
     // Create query for photos
     photoListener = firebase
       .firestore()
@@ -99,27 +100,90 @@ async function main() {
         photos.innerHTML = "";
         // Loop through documents in database
         snaps.forEach(doc => {
-          // Create an HTML entry for each photoContainer
-          const text = document.createElement("p");
-          text.textContent = doc.data().text;
-          photos.appendChild(text);
+          if (typeof doc.data().thumbUri !== "undefined") {
+            const photoSection = document.createElement("div");
+            photoSection.setAttribute("class", "clearfix");
+            storageRef
+              .child(doc.data().thumbUri)
+              .getDownloadURL()
+              .then(thumbUrl => {
+                // display thumb
+                const thumb = document.createElement("img");
+                thumb.setAttribute("src", thumbUrl);
+                photoSection.appendChild(thumb);
 
-          const sentiment = document.createElement("p");
-          var sentimentDoc = doc.data().sentiment;
-          text.textContent =
-            "Joy: " +
-            sentimentDoc.JoyLikelihood +
-            ", anger: " +
-            sentimentDoc.AngerLikelihood;
-          photos.appendChild(sentiment);
+                // display time
+                var date = new Date(doc.data().timestamp.seconds * 1000);
+                const time = document.createElement("p");
+                time.textContent =
+                  date.toDateString() + " " + date.toLocaleTimeString();
+                photoSection.append(time);
 
-          const thumb = document.createElement("img");
-          thumb.setAttribute("src", doc.data().imageUrl);
-          photos.appendChild(thumb);
+                // display text
+                const text = document.createElement("p");
+                text.textContent = doc.data().text;
+                photoSection.append(text);
 
-          console.log("photo update: %s", doc.data().imageUrl);
+                // display sentiment
+                var sentimentDoc = doc.data().sentiment;
+                photoSection.append(
+                  creareSentimentWidget(
+                    "Happy",
+                    "green",
+                    getSentimentPercentage(sentimentDoc.JoyLikelihood)
+                  )
+                );
+                photoSection.appendChild(
+                  creareSentimentWidget(
+                    "Sad",
+                    "blue",
+                    getSentimentPercentage(sentimentDoc.SorrowLikelihood)
+                  )
+                );
+                photoSection.appendChild(
+                  creareSentimentWidget(
+                    "Angry",
+                    "orange",
+                    getSentimentPercentage(sentimentDoc.AngerLikelihood)
+                  )
+                );
+              })
+              .catch(error => {
+                console.error(
+                  "Failed to get thumb download URL %s",
+                  doc.data().thumbUri
+                );
+              });
+
+            photos.appendChild(photoSection);
+          }
+          console.log("photo update: %s", doc.id);
         });
       });
+  }
+
+  let sentimentPercentage = new Map();
+  sentimentPercentage.set(0, 0); // UNKOWN
+  sentimentPercentage.set(1, 0); // VERY_UNLIKELY
+  sentimentPercentage.set(2, 25); // UNLIKELY
+  sentimentPercentage.set(3, 50); // POSSIBLE
+  sentimentPercentage.set(4, 75); // LIKELY
+  sentimentPercentage.set(5, 100); // VERY_LIKELY
+
+  function getSentimentPercentage(likelihood) {
+    return sentimentPercentage.get(likelihood);
+  }
+
+  function creareSentimentWidget(sentiment, color, percentage) {
+    // console.log("sentiment for %s is %d", sentiment, percentage);
+    var htmlString =
+      "<span>" +
+      sentiment +
+      '</span><div class="slice"><div class="bar"></div><div class="fill"></div></div>';
+    var div = document.createElement("div");
+    div.setAttribute("class", "c100 p" + percentage + " " + color + " tiny");
+    div.innerHTML = htmlString.trim();
+    return div;
   }
 
   // Unsubscribe from photo updates
@@ -130,20 +194,6 @@ async function main() {
       photoListener = null;
     }
   }
-
-  dropArea.addEventListener("dragover", event => {
-    event.stopPropagation();
-    event.preventDefault();
-    // Style the drag-and-drop as a "copy file" operation.
-    event.dataTransfer.dropEffect = "copy";
-  });
-
-  dropArea.addEventListener("drop", event => {
-    event.stopPropagation();
-    event.preventDefault();
-    const fileList = event.dataTransfer.files;
-    console.log(fileList);
-  });
 
   var files = [];
   document.getElementById("file").addEventListener("change", function(e) {

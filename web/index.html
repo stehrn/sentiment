@@ -14,26 +14,26 @@
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
+  
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
+    <link rel="stylesheet" href="circle/css/circle.css" />
+  
     <style>
-      #file-selector {
-        border: 3px dashed green;
-        width: 440px;
-        height: 150px;
+      img {
+        height: 50%;
+        width: 50%;
       }
     </style>
   </head>
   
   <body>
     <div id="app">
-      <!-- <img src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/firestore.png?alt=media&token=56d039dc-4a6c-477b-a153-a4bb8234646f" /> -->
-      <!-- <img src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/hosting.png?alt=media&token=57c8adb6-08c4-43f7-9395-4c299896a36c" /> -->
       <img
         src="https://firebasestorage.googleapis.com/v0/b/fir-images-a61c9.appspot.com/o/codelab.png?alt=media&token=f45f808c-ce40-4b34-944c-8d8fac00e13d"
       />
   
-      <section id="event-details-container">
+      <section id="details-container">
         <h1>my-sentiment</h1>
         <button id="login">Login</button>
       </section>
@@ -52,12 +52,10 @@
   
       <section id="photo-container">
         <h2>Upload Photo</h2>
-        <div id="file-selector"></div>
         <form id="upload-photo">
           <input type="file" id="file" accept=".jpg, .jpeg, .png" multiple />
           <br />Message: <input type="text" id="message" /> <br /><button
             type="submit"
-            id="analyse"
           >
             <i class="material-icons">send</i>
             <span>Analyse</span>
