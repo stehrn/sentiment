@@ -1,4 +1,4 @@
-package main
+package text
 
 import (
 	"encoding/json"
@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// Analyse takes the the JSON encoded "message" field in the body
+// Analyse is a cloud function, it takes the the JSON encoded "message" field in the body
 // of the request and analyzes the sentiment using the Cloud Natural Language API
 func Analyse(w http.ResponseWriter, r *http.Request) {
 	var d struct {
